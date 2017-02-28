@@ -44,7 +44,7 @@
 
 int main(int argc, char *argv[]) {
 
-  if (argc != 3) {
+  if (argc < 3) {
     return 1;
   }
 	char hostname[256];
@@ -59,11 +59,13 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	struct rr_entry *a2_e = NULL;
-	a2_e = rr_create_a(create_nlabel(hostname), inet_addr(argv[2]));
-	mdnsd_add_rr(svr, a2_e);
+  for (int i = 2; i < argc; i++) {
+    struct rr_entry *a2_e = NULL;
+    a2_e = rr_create_a(create_nlabel(hostname), inet_addr(argv[i]));
+    mdnsd_add_rr(svr, a2_e);
+    printf("added hostname %s = %s. \n", hostname, argv[i]);
+  }
 
-	printf("added hostname %s = %s. \n", hostname, argv[2]);
 
   pause();
 
