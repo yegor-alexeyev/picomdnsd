@@ -154,6 +154,10 @@ static int create_recv_sock() {
 	return sd;
 }
 
+static ssize_t send_unicast_packet(int fd, const void *data, size_t len, struct sockaddr_in* toaddr) {
+	return sendto(fd, data, len, 0, (struct sockaddr *) toaddr, sizeof(struct sockaddr_in));
+}
+
 static ssize_t send_packet(int fd, const void *data, size_t len) {
 	static struct sockaddr_in toaddr;
 	if (toaddr.sin_family != AF_INET) {
@@ -446,7 +450,12 @@ static void main_loop(struct mdnsd *svr) {
 			if (mdns != NULL) {
 				if (process_mdns_pkt(svr, mdns, mdns_reply)) {
 					size_t replylen = mdns_encode_pkt(mdns_reply, pkt_buffer, PACKET_SIZE);
-					send_packet(svr->sockfd, pkt_buffer, replylen);
+          if (fromaddr.sin_port == htons(MDNS_PORT)) {
+            send_packet(svr->sockfd, pkt_buffer, replylen);
+          } else {
+            //Legacy unicast response. https://tools.ietf.org/html/rfc6762#section-6.7
+            send_unicast_packet(svr->sockfd, pkt_buffer, replylen, &fromaddr);
+          }
 				} else if (mdns->num_qn == 0) {
 					DEBUG_PRINTF("(no questions in packet)\n\n");
 				}
