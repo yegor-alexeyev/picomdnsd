@@ -1,2 +1,2 @@
 #!/bin/sh
-./picomdnsd `hostname` `hostname --ip-addresses`
+picomdnsd `hostname` `hostname --ip-addresses`
