@@ -42,6 +42,9 @@
 
 int main(int argc, char *argv[]) {
 
+  if (argc != 3) {
+    return 1;
+  }
 	char hostname[256];
 
 	sprintf(hostname, "%s.local", argv[1]);
