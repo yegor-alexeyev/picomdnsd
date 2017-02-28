@@ -1,0 +1,8 @@
+[Unit]
+Description=mdns daemon
+[Service]
+ExecStart=/bin/mdnsd
+
+[Install]
+WantedBy=multi-user.target
+
