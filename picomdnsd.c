@@ -37,6 +37,8 @@
 #endif
 
 #include <stdio.h>
+#include <unistd.h>
+
 #include "mdns.h"
 #include "mdnsd.h"
 
@@ -61,8 +63,9 @@ int main(int argc, char *argv[]) {
 	a2_e = rr_create_a(create_nlabel(hostname), inet_addr(argv[2]));
 	mdnsd_add_rr(svr, a2_e);
 
-	printf("added hostname %s = %s. press ENTER to exit\n", hostname, argv[2]);
-	getchar();
+	printf("added hostname %s = %s. \n", hostname, argv[2]);
+
+  pause();
 
 	mdnsd_stop(svr);
 
