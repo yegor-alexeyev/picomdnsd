@@ -51,6 +51,8 @@
 #include <unistd.h>
 #include <assert.h>
 #include <pthread.h>
+#include <ifaddrs.h>
+
 
 /*
  * Define a proper IP socket level if not already done.
@@ -127,15 +129,33 @@ static int create_recv_sock() {
 		log_message(LOG_ERR, "recv bind(): %m");
 	}
 
-	// add membership to receiving socket
-	struct ip_mreq mreq;
-	memset(&mreq, 0, sizeof(struct ip_mreq));
-	mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-	mreq.imr_multiaddr.s_addr = inet_addr(MDNS_ADDR);
-	if ((r = setsockopt(sd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &mreq, sizeof(mreq))) < 0) {
-		log_message(LOG_ERR, "recv setsockopt(IP_ADD_MEMBERSHIP): %m");
-		return r;
-	}
+  {
+      struct ifaddrs *cursor;
+      int result = getifaddrs(&cursor);
+      if ( r < 0 ) {
+          log_message(LOG_ERR, "recv getifaddrs: %m");
+          return r;
+      }
+
+      while ( cursor != NULL ) {
+          if ( cursor->ifa_addr->sa_family == AF_INET 
+                  //&& !(cursor->ifa_flags & IFF_LOOPBACK) 
+                  //&& !(cursor->ifa_flags & IFF_POINTOPOINT) 
+                  &&  (cursor->ifa_flags & IFF_MULTICAST) ) {
+
+              struct ip_mreq multicast_req;
+              memset(&multicast_req, 0, sizeof(multicast_req));
+              multicast_req.imr_multiaddr.s_addr = inet_addr(MDNS_ADDR);
+              multicast_req.imr_interface = ((struct sockaddr_in *)cursor->ifa_addr)->sin_addr;
+
+              if ((r = setsockopt(sd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &multicast_req, sizeof(multicast_req))) < 0 ) {
+                log_message(LOG_ERR, "recv setsockopt(IP_ADD_MEMBERSHIP): %m");
+                return r;
+              }
+          }
+          cursor = cursor->ifa_next;
+      }
+  }
 
 	// enable loopback in case someone else needs the data
 	if ((r = setsockopt(sd, IPPROTO_IP, IP_MULTICAST_LOOP, (char *) &on, sizeof(on))) < 0) {
