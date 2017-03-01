@@ -1,5 +1,5 @@
 CFLAGS += -Wall -pedantic -std=gnu99 -O3
-CFLAGS += -DNDEBUG
+#CFLAGS += -DNDEBUG
 LFLAGS = -lpthread
 
 CC ?= gcc
