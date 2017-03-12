@@ -31,7 +31,18 @@
 
 #include <stdint.h>
 
-struct mdnsd;
+struct mdnsd {
+	pthread_mutex_t data_lock;
+	int sockfd;
+	int notify_pipe[2];
+	int stop_flag;
+
+	struct rr_group *group;
+	struct rr_list *announce;
+	struct rr_list *services;
+	uint8_t *hostname;
+};
+
 struct mdns_service;
 
 // starts a MDNS responder instance

@@ -643,7 +643,7 @@ static size_t mdns_parse_rr(uint8_t *pkt_buf, size_t pkt_len, size_t off,
 	p += sizeof(uint16_t);
 
 	if (p + rr_data_len > e) {
-		DEBUG_PRINTF("rr_data_len goes beyond packet buffer: %lu > %lu\n", rr_data_len, e - p);
+		DEBUG_PRINTF("rr_data_len goes beyond packet buffer: %zu > %d\n", rr_data_len, e - p);
 		rr_entry_destroy(rr);
 		return 0;
 	}
@@ -654,7 +654,7 @@ static size_t mdns_parse_rr(uint8_t *pkt_buf, size_t pkt_len, size_t off,
 	switch (rr->type) {
 		case RR_A:
 			if (rr_data_len < sizeof(uint32_t)) {
-				DEBUG_PRINTF("invalid rr_data_len=%lu for A record\n", rr_data_len);
+				DEBUG_PRINTF("invalid rr_data_len=%zu for A record\n", rr_data_len);
 				parse_error = 1;
 				break;
 			}
@@ -664,7 +664,7 @@ static size_t mdns_parse_rr(uint8_t *pkt_buf, size_t pkt_len, size_t off,
 
 		case RR_AAAA:
 			if (rr_data_len < sizeof(struct in6_addr)) {
-				DEBUG_PRINTF("invalid rr_data_len=%lu for AAAA record\n", rr_data_len);
+				DEBUG_PRINTF("invalid rr_data_len=%zu for AAAA record\n", rr_data_len);
 				parse_error = 1;
 				break;
 			}

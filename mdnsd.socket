@@ -1,0 +1,7 @@
+[Unit]
+Description=mdnsd responder socket
+[Socket]
+ListenDatagram=224.0.0.251:5353
+
+[Install]
+WantedBy=sockets.target

@@ -1,6 +1,6 @@
 CFLAGS += -Wall -pedantic -std=gnu99 -O3
 #CFLAGS += -DNDEBUG
-LFLAGS = -lpthread
+LFLAGS = -lpthread -lsystemd
 
 CC ?= gcc
 
@@ -16,5 +16,5 @@ clean:
 	$(RM) picomdnsd
 
 
-picomdnsd: picomdnsd.c mdns.c mdnsd.c
+picomdnsd:  mdns.c mdnsd.c
 	$(CC) -o $@ $(CFLAGS) $^ $(LFLAGS)

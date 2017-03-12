@@ -1,9 +1,7 @@
 [Unit]
 Description=mdns daemon
 [Service]
-ExecStart=/bin/mdnsd
-Restart=on-failure
-RestartSec=2
+ExecStart=/bin/picomdnsd
 
 
 [Install]
