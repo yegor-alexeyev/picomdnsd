@@ -1,5 +1,6 @@
 [Unit]
 Description=mdns daemon
+StartLimitIntervalSec=0
 [Service]
 ExecStart=/bin/picomdnsd
 

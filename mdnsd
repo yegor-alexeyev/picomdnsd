@@ -1,3 +1,0 @@
-#!/bin/sh
-sleep 12
-picomdnsd `hostname` `hostname --ip-addresses`
