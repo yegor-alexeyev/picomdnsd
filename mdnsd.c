@@ -332,17 +332,19 @@ int main(int argc, char *argv[]) {
   }
 
   while ( cursor != NULL ) {
-    if ( cursor->ifa_addr->sa_family == AF_INET 
-            && !(cursor->ifa_flags & IFF_LOOPBACK) 
-            //&& !(cursor->ifa_flags & IFF_POINTOPOINT) 
-            &&  (cursor->ifa_flags & IFF_MULTICAST) ) {
+    if ( cursor->ifa_addr != NULL ) {
+      if ( cursor->ifa_addr->sa_family == AF_INET 
+              && !(cursor->ifa_flags & IFF_LOOPBACK) 
+              //&& !(cursor->ifa_flags & IFF_POINTOPOINT) 
+              &&  (cursor->ifa_flags & IFF_MULTICAST) ) {
 
-      uint32_t address = ((struct sockaddr_in *)cursor->ifa_addr)->sin_addr.s_addr;
-      struct rr_entry *a2_e = rr_create_a(create_nlabel(hostname), address);
-      mdnsd_add_rr(&server, a2_e);
-      printf("added hostname %s = %s. \n", hostname, inet_ntoa((struct in_addr){address}));
+        uint32_t address = ((struct sockaddr_in *)cursor->ifa_addr)->sin_addr.s_addr;
+        struct rr_entry *a2_e = rr_create_a(create_nlabel(hostname), address);
+        mdnsd_add_rr(&server, a2_e);
+        printf("added hostname %s = %s. \n", hostname, inet_ntoa((struct in_addr){address}));
 
 
+      }
     }
     cursor = cursor->ifa_next;
   }
